@@ -1,0 +1,30 @@
+name: Build Dimensionz DSi
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitarm:latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nintendo DS toolchain
+        run: dkp-pacman -Syu --noconfirm --needed nds-dev
+
+      - name: Prepare application icon
+        run: |
+          dkp-pacman -S --noconfirm --needed imagemagick
+          magick Dimensionz.Icon.png -resize 32x32! -background white -alpha remove -colors 16 -type Palette BMP3:icon.bmp
+
+      - name: Compile Dimensionz
+        run: make GAME_TITLE=Dimensionz GAME_ICON=icon.bmp
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Dimensionz-DSi
+          path: Dimensionz.nds
+          if-no-files-found: error
