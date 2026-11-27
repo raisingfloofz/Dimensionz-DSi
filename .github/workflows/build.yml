@@ -12,11 +12,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Inspect installed toolchain
+        run: |
+          echo "DEVKITPRO=$DEVKITPRO"
+          echo "DEVKITARM=$DEVKITARM"
+          arm-none-eabi-gcc --version
+          find /opt/devkitpro -name 'libfat*.a'
+          find /opt/devkitpro -name 'libdvm*.a'
+          find /opt/devkitpro -name 'libnds9.a'
+          find /opt/devkitpro -name 'libcalico*.a'
+          dkp-pacman -Q
+
       - name: Compile Dimensionz
-        run: make
+        run: |
+          make clean
+          make
 
       - uses: actions/upload-artifact@v4
         with:
           name: Dimensionz-DSi
-          path: "**/*.nds"
+          path: Dimensionz.nds
           if-no-files-found: error
