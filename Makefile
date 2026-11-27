@@ -12,7 +12,7 @@ CALICO := $(DEVKITPRO)/calico
 
 ARCH := -march=armv5te -mtune=arm946e-s -mthumb -mthumb-interwork
 
-CFLAGS := -g -Wall -O2 $(ARCH) -DARM9
+CFLAGS := -g -Wall -O2 $(ARCH) -DARM9 -D__NDS__
 CFLAGS += -I$(LIBNDS)/include
 CFLAGS += -I$(CALICO)/include
 
