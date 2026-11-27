@@ -1,5 +1,15 @@
 #include <nds.h>
+#include <nds/arm9/input.h>
+#include <calico/nds/keypad.h>
 #include <fat.h>
+
+#ifndef KEY_X
+#define KEY_X (1u << 10)
+#endif
+
+#ifndef KEY_Y
+#define KEY_Y (1u << 11)
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
