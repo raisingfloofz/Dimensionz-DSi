@@ -16,15 +16,14 @@ jobs:
         run: |
           echo "DEVKITPRO=$DEVKITPRO"
           echo "DEVKITARM=$DEVKITARM"
-          arm-none-eabi-gcc --version
-          find /opt/devkitpro -name 'libfat*.a'
-          find /opt/devkitpro -name 'libdvm*.a'
-          find /opt/devkitpro -name 'libnds9.a'
-          find /opt/devkitpro -name 'libcalico*.a'
-          dkp-pacman -Q
+          "$DEVKITARM/bin/arm-none-eabi-gcc" --version || true
+          find /opt/devkitpro -name '*.a'
+          find /opt/devkitpro -name '*.specs'
+          dkp-pacman -Q || true
 
       - name: Compile Dimensionz
         run: |
+          export PATH="$DEVKITARM/bin:$DEVKITPRO/tools/bin:$PATH"
           make clean
           make
 
