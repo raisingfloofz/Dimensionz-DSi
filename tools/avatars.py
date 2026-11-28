@@ -25,3 +25,27 @@ lines.append('return NULL;}')
 Path('source').mkdir(exist_ok=True)
 Path('source/avatars.h').write_text('\n'.join(lines)+'\n')
 print(f'Generated {len(entries)} portraits.')
+
+# Embed repository WAV files in the existing generated header artifact.
+import wave, struct
+audio = ['#define DZ_AUDIO 1']
+rows = []
+for name in ('typing', 'received', 'sent'):
+    try:
+        with wave.open(str(Path('Sounds') / (name + '.wav')), 'rb') as w:
+            if (w.getnchannels(), w.getsampwidth(), w.getframerate(), w.getcomptype()) != (1, 2, 22050, 'NONE'):
+                raise ValueError('Expected mono 16-bit PCM WAV at 22050 Hz')
+            raw = w.readframes(w.getnframes())
+        if not raw or len(raw) > 440000:
+            raise ValueError('Empty or too long (maximum 10 seconds)')
+        raw += bytes((-len(raw)) % 4)
+        values = struct.unpack('<' + 'h' * (len(raw)//2), raw)
+        audio.append('static const short sfx_%s[] __attribute__((aligned(32))) = {%s};' % (name, ','.join(map(str, values))))
+        rows.append('{sfx_%s,sizeof(sfx_%s)}' % (name,name))
+        print('Embedded sound:', name)
+    except (OSError, ValueError, EOFError, wave.Error) as exc:
+        print(f'::warning::Skipping sound {name}: {exc}')
+        rows.append('{NULL,0}')
+audio.append('static const struct {const short *data; unsigned bytes;} dz_audio[] = {' + ','.join(rows) + '};')
+with Path('source/avatars.h').open('a') as out:
+    out.write('\n'.join(audio)+'\n')
