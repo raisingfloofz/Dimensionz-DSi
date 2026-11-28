@@ -10,7 +10,7 @@ for folder, prefix in [('Contact images', ''), ('USERS', 'USER:')]:
             continue
         try:
             with Image.open(p) as im:
-                im = ImageOps.fit(ImageOps.exif_transpose(im).convert('RGB'), (64, 64) if prefix else (28, 28))
+                im = ImageOps.fit(ImageOps.exif_transpose(im).convert('RGB'), (64, 64) if prefix else (28, 28), centering=(0.5, 0.0) if prefix and p.stem.lower() == "bia" else (0.5, 0.5))
                 values = [0x8000 | (r >> 3) | ((g >> 3) << 5) | ((b >> 3) << 10) for r,g,b in im.getdata()]
         except (OSError, ValueError) as exc:
             print(f'::warning::Skipping unreadable portrait {p}: {exc}')
