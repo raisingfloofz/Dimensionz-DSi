@@ -8,6 +8,7 @@ include $(DEVKITARM)/ds_rules
 
 TARGET := Dimensionz
 
+GAME_ICON := Dimensionz.bmp
 GAME_TITLE := Dimensionz
 GAME_SUBTITLE1 := Personal Chat Diary
 GAME_SUBTITLE2 := DSi Edition
@@ -42,7 +43,7 @@ main.o: source/main.c
 $(TARGET).elf: main.o
 	$(CC) $(LDFLAGS) main.o $(LIBS) -o $@
 
-$(TARGET).nds: $(TARGET).elf
+$(TARGET).nds: $(TARGET).elf $(GAME_ICON)
 
 clean:
 	rm -f main.o Dimensionz.elf Dimensionz.nds Dimensionz.map Dimensionz.lst
